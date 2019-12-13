@@ -117,9 +117,24 @@ class WorkThread(QThread):
         #更新一下config
         self.ui.update_config()
         #处理数据
-        hu.handle_file(self.ui.read_path,self.ui.save_path,self)
+        #user_data
+        user_data={
+            'level':16,
+            'col_name':'段位',
+            'file_name':'/段位使用率.xlsx',
+            'level_type':'pvp_level'
+        }
+        hu.handle_file(self.ui.read_path,self.ui.save_path,self,user_data)
         #不管怎么样，结束时进度条设定为100
-        
+        if self.ui.gen_pve_level_btn.isChecked():
+            user_data={
+            'level':15,
+            'col_name':'主城',
+            'file_name':'/主城使用率.xlsx',
+            'level_type':'pve_level'
+            
+        }
+            hu.handle_file(self.ui.read_path,self.ui.save_path,self,user_data)
         self.trigger.emit(100)
         
 if __name__ == "__main__":

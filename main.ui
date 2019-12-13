@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
+    <width>554</width>
     <height>329</height>
    </rect>
   </property>
@@ -119,6 +119,19 @@
     </property>
     <property name="text">
      <string>打开查询网址</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="gen_pve_level_btn">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>275</y>
+      <width>241</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>是否生成主城等级使用</string>
     </property>
    </widget>
   </widget>

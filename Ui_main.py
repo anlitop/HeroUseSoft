@@ -12,7 +12,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(569, 329)
+        MainWindow.resize(554, 329)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -55,6 +55,9 @@ class Ui_MainWindow(object):
         self.open_link_btn = QtWidgets.QPushButton(self.centralwidget)
         self.open_link_btn.setGeometry(QtCore.QRect(440, 240, 101, 21))
         self.open_link_btn.setObjectName("open_link_btn")
+        self.gen_pve_level_btn = QtWidgets.QCheckBox(self.centralwidget)
+        self.gen_pve_level_btn.setGeometry(QtCore.QRect(330, 275, 241, 21))
+        self.gen_pve_level_btn.setObjectName("gen_pve_level_btn")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -77,4 +80,5 @@ class Ui_MainWindow(object):
         self.start_handle_btn.setText(_translate("MainWindow", "开始"))
         self.copy_sql_btn.setText(_translate("MainWindow", "复制查询语句"))
         self.open_link_btn.setText(_translate("MainWindow", "打开查询网址"))
+        self.gen_pve_level_btn.setText(_translate("MainWindow", "是否生成主城等级使用"))
 

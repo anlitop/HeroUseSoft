@@ -1,37 +1,37 @@
-SELECT "hero",pvp_level,subtype,count("hero") as "times",is_win
+SELECT "hero",pvp_level,subtype,count("hero") as "times",is_win,pve_level
 from(
-    SELECT hero1 as "hero",pvp_level,subtype,is_win
+    SELECT hero1 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero2 as "hero",pvp_level,subtype,is_win
+    SELECT hero2 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero3 as "hero",pvp_level,subtype,is_win
+    SELECT hero3 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero4 as "hero",pvp_level,subtype,is_win
+    SELECT hero4 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero5 as "hero",pvp_level,subtype,is_win
+    SELECT hero5 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero6 as "hero",pvp_level,subtype,is_win
+    SELECT hero6 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero7 as "hero",pvp_level,subtype,is_win
+    SELECT hero7 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     union all
-    SELECT hero8 as "hero",pvp_level,subtype,is_win
+    SELECT hero8 as "hero",pvp_level,subtype,is_win,pve_level
     from v_event_13
     where "$part_event"='fighthero' and "$part_date">='${startdate}' and "$part_date"<='${enddate}'
     
 )
-group by "hero",pvp_level,subtype,is_win
-order by "hero",pvp_level,subtype
+group by "hero",pvp_level,subtype,is_win,pve_level
+order by "hero",pvp_level,subtype,pve_level
