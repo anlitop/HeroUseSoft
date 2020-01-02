@@ -9,8 +9,7 @@ from webbrowser import open_new_tab,get
 
 
 class App(QMainWindow,Ui_MainWindow):
-   
-    
+       
     def __init__(self,parent=None):
         super(App,self).__init__(parent)
         self.setupUi(self)
@@ -28,10 +27,6 @@ class App(QMainWindow,Ui_MainWindow):
         self.control_btns=[self.chose_data_btn,self.chose_file_btn,self.start_handle_btn,self.data_path_line,self.save_path_line]
         self.read_config()
         self.cb=QApplication.clipboard()
-        
-        
-        
-    
     def onClick_data_btn(self):
         '''设置data文件的路径'''
         path=self.check_file_path(self.data_path_line,"read_path")
@@ -50,6 +45,7 @@ class App(QMainWindow,Ui_MainWindow):
         if path.isfile(self.read_path) and path.isdir(self.save_path):
             #开始工作
             self.workthread.start()
+            #self.start_work()
         else:
             QMessageBox.critical(self,"警告","非法路径")
     def check_file_path(self,l_edit,key_name):
@@ -62,34 +58,26 @@ class App(QMainWindow,Ui_MainWindow):
         '''处理按钮的禁用与启用'''
         for btn in self.control_btns:
             btn.setEnabled(open)
-
     def Callback(self,i):
         '''设置进度条'''
-
         if i==0:
             self.handle_file_btns(False)
         if i==100 and self.handle_file_progress.value()!=100:
             startfile(self.save_path)
-            
             self.handle_file_btns(True)
             self.workthread.wait()
-            
-        self.handle_file_progress.setValue(i)
-        
+        self.handle_file_progress.setValue(i)        
     def read_config(self):
         with open("Data/config.json",'r')as f:
             self.config=load(f)            
         with open("Data/sql.csv",'r') as f:
-            self.sql_str=f.read()
-            
-            
+            self.sql_str=f.read()         
     def onclick_copy_btn(self):
         self.cb.clear()
         self.cb.setText(self.sql_str)
         reply=QMessageBox.information(self,"复制成功","复制成功是否前往网站进行查询",QMessageBox.Ok | QMessageBox.Close, QMessageBox.Close)
         if reply==QMessageBox.Ok:
             self.onclick_open_link()
-
     def onclick_open_link(self):
         try:
             get("chrome").open_new_tab(self.config["tga_url"])
@@ -104,8 +92,28 @@ class App(QMainWindow,Ui_MainWindow):
     def open_dir(self):
         '''打开路径'''
         pass
+    def start_work(self):
+        #user_data
+        user_data={
+            'level':16,
+            'col_name':'段位',
+            'file_name':'/段位使用率.xlsx',
+            'level_type':'pvp_level'
+        }
+        hu.handle_file(self.read_path,self.save_path,self,user_data)
+        #不管怎么样，结束时进度条设定为100
+        
+        user_data={
+        'level':15,
+        'col_name':'主城',
+        'file_name':'/主城使用率.xlsx',
+        'level_type':'pve_level'}
+        hu.handle_file(self.read_path,self.save_path,self,user_data)
+        
+
 class WorkThread(QThread):
     trigger=pyqtSignal(int)
+    
     def __init__(self,ui):
         super(WorkThread,self).__init__()
         self.ui=ui
@@ -117,12 +125,17 @@ class WorkThread(QThread):
         #更新一下config
         self.ui.update_config()
         #处理数据
+        if self.ui.gen_pve_level_btn.isChecked():
+            max_sum_count=200
+        else:
+            max_sum_count=100
         #user_data
         user_data={
             'level':16,
             'col_name':'段位',
             'file_name':'/段位使用率.xlsx',
-            'level_type':'pvp_level'
+            'level_type':'pvp_level',
+            'max_sum_count':max_sum_count
         }
         hu.handle_file(self.ui.read_path,self.ui.save_path,self,user_data)
         #不管怎么样，结束时进度条设定为100
@@ -131,7 +144,8 @@ class WorkThread(QThread):
             'level':15,
             'col_name':'主城',
             'file_name':'/主城使用率.xlsx',
-            'level_type':'pve_level'
+            'level_type':'pve_level',
+            'max_sum_count':max_sum_count
             
         }
             hu.handle_file(self.ui.read_path,self.ui.save_path,self,user_data)

@@ -6,24 +6,24 @@ from openpyxl import load_workbook
 #
 
 #常量区域
-race_types=(1011,1111,1022)#比赛类型
+race_types=('1011','1111','1022')#比赛类型
 sum_count=0
-max_pvp_level=0
+max_level=0
 level_type=''
 def get_winrate(heroid,pvp_level,race_type,data):
     '''通过英雄id，获取该段位、该游戏比赛类型下的胜率'''
+    global level_type
+    print('计算'+str(level_type)+str(heroid)+str(pvp_level)+'的胜率')
+    use_data=data[(data['hero']==heroid) & (data[level_type]==pvp_level) & (data['subtype']==race_type)]
+    #print(use_data)
     
-    use_data=data[(data.hero==heroid) & (data[level_type]==pvp_level) & (data.subtype==race_type)]
     
     win_number=0
     lose_number=0
-    
-    if len(use_data[use_data.is_win==1])==1:
-        win_number=use_data[use_data.is_win==1].times.iloc[0]
-    if len(use_data[use_data.is_win==0])==1:
-        lose_number=use_data[use_data.is_win==0].times.iloc[0]
-       
+    win_number=use_data[use_data['is_win']==1]['times'].sum()
+    lose_number=use_data[use_data['is_win']==0]['times'].sum()   
     try:
+        print(win_number/(lose_number+win_number))
         return win_number/(lose_number+win_number)
         
     except ZeroDivisionError:
@@ -37,11 +37,11 @@ def set_times_sum(data):
     
     for race_type in race_types:
         resoult[race_type]={}
-        for level in range(1,max_pvp_level+1):
+        for level in range(1,max_level+1):
             resoult[race_type][level]=data[(getattr(data,"subtype")==race_type) & (getattr(data,level_type)==level)]['times'].sum()/8
             print("总和计算完成"+str(resoult[race_type][level]))
 
-    return resoult,len(race_types)*max_pvp_level
+    return resoult,len(race_types)*max_level
 def get_userate(heroid,pvp_level,race_type,data,times_sum_dict):
     global level_type
     '''获取英雄使用率'''
@@ -92,30 +92,29 @@ def set_excel_format(file_path):
         
     excel.save(file_path)
 def handle_file(read_file,save_file,th,user_data): 
-    global max_pvp_level
+    global max_level
     global level_type
-    max_pvp_level=user_data['level']
+    max_level=user_data['level']
     level_type=user_data['level_type']
-
     save_file+=user_data['file_name']
+
     hero_property_data=pd.read_csv("Data/hero_property.csv",encoding='gb2312')
-    
     try:
         hero_use_data=pd.read_csv(read_file,encoding ='gb2312',keep_default_na=False)
-        
     except FileNotFoundError:
         return
-    
     hero_ids=hero_property_data["hero_id"].tolist()
-    
+
     build_excel(save_file,'1.0.1','xxxx')
+
     times_sum_dict,sum_count=set_times_sum(hero_use_data)
     
     #循环
     count=0
     for race_type in race_types:
+        
         to_excel_dict={}
-        for level in range(1,user_data['level']+1):
+        for level in range(1,max_level+1):
             print(str(race_type),str(level)+"正在计算中....")
             if level==1:
                 to_excel_dict["英雄名称"]={}
@@ -131,7 +130,7 @@ def handle_file(read_file,save_file,th,user_data):
                 to_excel_dict[user_data['col_name']+str(level)+"胜率"][heroid]=get_winrate(heroid,level,race_type,hero_use_data)
             print(str(race_type),str(level)+"计算完成！")
             count+=1
-            th.trigger.emit(count/sum_count*100)
+            th.trigger.emit(count/sum_count*user_data['max_sum_count'])
         #转换为dataframe
         #print(to_excel_dict["英雄名称"][heroid])
         to_excel_df=pd.DataFrame(to_excel_dict)
